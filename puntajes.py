@@ -1,25 +1,23 @@
 import pygame
 from pygame.locals import *
-from base_sqlite import *
 from constantes import *
 
 pygame.init()
 
-def mostrar_puntajes(puntaje_final, PANTALLA):
+def mostrar_puntajes(puntaje_final, ancho_alto_pantalla):
 
     fuente = pygame.font.SysFont('Impact', 30)
-    pantalla = pygame.display.set_mode(PANTALLA)
-    clock = pygame.time.Clock()
-    pygame.display.set_caption('Fantasmin👻')
+    pantalla = pygame.display.set_mode(ancho_alto_pantalla)
+    pygame.display.set_caption('MATCH-3')
 
-    fondo = pygame.image.load('Imagenes\menu sprites\PNG\Main_Menu\BG.png')
-    fondo = pygame.transform.scale(fondo, (PANTALLA))
+    fondo = pygame.image.load('imagenes\FONDOS\FONDO_MENU.png')
+    fondo = pygame.transform.scale(fondo, (ancho_alto_pantalla))
 
     ancho_boton = 300
     alto_boton = 30
     separacion_botones = 50
-    posicion_x = (PANTALLA[0] - ancho_boton) // 2
-    posicion = ((PANTALLA[1] - (alto_boton + separacion_botones) * 3) // 2) + separacion_botones * 3
+    posicion_x = (ancho_alto_pantalla[0] - ancho_boton) // 2
+    posicion = ((ancho_alto_pantalla[1] - (alto_boton + separacion_botones) * 3) // 2) + separacion_botones * 3
     posicion_1 = posicion + alto_boton + separacion_botones
 
     letra_1 = None
@@ -34,8 +32,6 @@ def mostrar_puntajes(puntaje_final, PANTALLA):
     correr = True
 
     while correr:
-
-        clock.tick(60)
 
         pantalla.blit(fondo, (0,0))
 
@@ -70,35 +66,35 @@ def mostrar_puntajes(puntaje_final, PANTALLA):
         
         puntaje = puntaje_final['puntaje']
         texto_puntaje = fuente.render(f'Puntaje del juego: {puntaje}', True, ('white'))
-        pantalla.blit(texto_puntaje, ((PANTALLA[0] / 2) - 150, 100))
+        pantalla.blit(texto_puntaje, ((ancho_alto_pantalla[0] / 2) - 150, 100))
         
         texto_ingresar_nombre = fuente.render('Ingrese nombre:', True, ('white'))
-        pantalla.blit(texto_ingresar_nombre, ((PANTALLA[0] // 2) - 100, 300))
+        pantalla.blit(texto_ingresar_nombre, ((ancho_alto_pantalla[0] // 2) - 100, 300))
 
         texto_letras = fuente.render(f'{letra_1 or "_"} {letra_2 or "_"} {letra_3 or "_"}', True, ('red'))
-        pantalla.blit(texto_letras, ((PANTALLA[0] // 2) - 30, 450))
+        pantalla.blit(texto_letras, ((ancho_alto_pantalla[0] // 2) - 30, 450))
 
         boton = pygame.Rect(posicion_x, posicion_1, ancho_boton, alto_boton)
         texto = fuente.render('Guardar puntaje', True, ('white'))
-        text_rect = texto.get_rect(center=(PANTALLA[0] // 2, posicion_1 + alto_boton // 2))
+        text_rect = texto.get_rect(center=(ancho_alto_pantalla[0] // 2, posicion_1 + alto_boton // 2))
         pantalla.blit(texto, text_rect)
 
         if boton_apretado:
             if puede_guardar:
                 nombre = letra_1 + letra_2 + letra_3
-                carga = cargar_campo(nombre, puntaje)
+                carga = True
                 boton_apretado = False
             else:
                 boton_apretado = False
         
         if carga:
             texto = fuente.render('Se cargo correctamente', True, ('white'))
-            pantalla.blit(texto, ((PANTALLA[0] // 2) - 160, 750))
+            pantalla.blit(texto, ((ancho_alto_pantalla[0] // 2) - 160, 750))
             volvio_a_cargar = True
             return 'menu_principal'
         else:
             texto = fuente.render('Se deben ingresar las 3 letras para poder guardar.', True, ('white'))
-            pantalla.blit(texto, ((PANTALLA[0] // 2) - 300, 750))
+            pantalla.blit(texto, ((ancho_alto_pantalla[0] // 2) - 300, 750))
 
         pygame.display.update()
 

@@ -1,59 +1,55 @@
 import pygame
+from constantes import *
+from pygame.locals import *
 
 pygame.init()
 
-def leaderbord(PANTALLA):
-    fuente = pygame.font.SysFont('Impact', 30)
-    pantalla = pygame.display.set_mode(PANTALLA)
-    clock = pygame.time.Clock()
-    pygame.display.set_caption('Fantasmin👻')
+'''def saber_top10(lista):
+    lista = []
+    return lista'''
 
-    fondo = pygame.image.load('Imagenes\menu sprites\PNG\Main_Menu\BG.png')
-    fondo = pygame.transform.scale(fondo, (PANTALLA))
+def leaderboard(ancho_alto_pantalla):
 
-    puntajes = saber_top10()
+    size_fuente = int(ancho_alto_pantalla[1] * 0.1)
+    fuente = pygame.font.SysFont('Impact', size_fuente)
+    pantalla = pygame.display.set_mode(ancho_alto_pantalla)
+    pygame.display.set_caption('MATCH-3')
 
-    ancho_boton = 500
-    alto_boton = 60
-    posicion_x = PANTALLA[0] // 2 - ancho_boton // 2
-    posicion_1 = PANTALLA[1] - alto_boton - 80
-    
+    boton_ancho = pantalla.get_width() * 0.1
+    boton_alto = pantalla.get_height() * 0.1
+    boton_x = (pantalla.get_width() - boton_ancho) / 150
+    boton_volver_y = pantalla.get_height() * 0.05
+
+    fondo = pygame.image.load('imagenes\FONDOS\FONDO_MENU.png')
+    fondo = pygame.transform.scale(fondo, ancho_alto_pantalla)
+
+    '''puntajes = saber_top10()'''
+
     correr = True
+
     while correr:
-        clock.tick(60)
-        
-        pantalla.blit(fondo,(0,0))
-        pos = pygame.mouse.get_pos()
+
+        pantalla.blit(fondo, (0,0))
+        mouse_pos = pygame.mouse.get_pos()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 correr = False
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if boton_volver.collidepoint(event.pos):
-                    return 'menu_principal'
-        x = PANTALLA[0] // 2 - 200
-        x_puntaje = x + 225
-        y = 100
-        texto = fuente.render(f'  Nombre -- Puntaje ', True, 'White')
-        pantalla.blit(texto, (x+60, y -60))
-        if not puntajes:
-            texto = fuente.render('Todavia no se cargo ningun dato.', True, 'White')
-            pantalla.blit(texto, (x - 110 , y + 100))
-        else:
-            a=1
-            for nombre, puntuacion in puntajes:
-                if puntuacion is not None:
-                    texto = fuente.render(f'{a}. {nombre}', True, 'White')
-                    pantalla.blit(texto, (x+50, y))
-                    texto = fuente.render(f'-- {puntuacion}', True, 'White')
-                    pantalla.blit(texto, (x_puntaje, y))
-                y += 60
-                a += 1
-        
-        boton_volver = pygame.Rect(posicion_x, posicion_1, ancho_boton, alto_boton)
-        texto = fuente.render('Volver al menu principal', True, 'White')
-        text_rect = texto.get_rect(center=(PANTALLA[0] // 2, posicion_1 + alto_boton // 2))
-        pantalla.blit(texto, text_rect)         
+
+            if event.type == MOUSEBUTTONDOWN and event.button == 1:
+                if volver.collidepoint(mouse_pos):
+                    return "menu_principal"
+
+        volver = pygame.Rect(boton_x, boton_volver_y, boton_ancho, boton_alto)
+        volver_image = pygame.image.load('imagenes\BOTONES_EXTRAS\VUELVE.png')
+        volver_image = pygame.transform.scale(volver_image, (boton_ancho, boton_alto))
+        pantalla.blit(volver_image, (boton_x, boton_volver_y))
+
+        texto = fuente.render('Top10', True, 'White')
+        pantalla.blit(texto, (boton_x * 65, boton_volver_y * 0.5))
+
+        if DEBUG == True:
+            pygame.draw.rect(pantalla, "darkorchid", volver, 1, border_radius=15)
 
         pygame.display.update()
 

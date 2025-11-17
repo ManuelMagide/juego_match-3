@@ -1,10 +1,11 @@
 import pygame
 
-ANCHO_VENTANA = 1000
-ALTO_VENTANA = 800
+ANCHO_VENTANA = 1200
+ALTO_VENTANA = 1000
 PANTALLA = (ANCHO_VENTANA, ALTO_VENTANA)
 
-DEBUG = False
+
+DEBUG = True
 
 teclas_letras = {
     pygame.K_a: "A",

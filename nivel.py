@@ -86,3 +86,19 @@ def nivel():
 
     fondo = pygame.image.load('Imagenes\Fondo.jpg')
     fondo = pygame.transform.scale(fondo, (ANCHO_VENTANA, ALTO_VENTANA))
+
+    '''for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if bandera_win == True or bandera_lose == True:
+                if event.type == MOUSEBUTTONDOWN and event.button == 1:
+                    if volver.collidepoint(mouse_pos):
+                        return "menu_principal", dic_puntaje
+                    if replay.collidepoint(mouse_pos):
+                        return "nivel", dic_puntaje
+                    if guardar.collidepoint(mouse_pos):
+                        if len(dic_puntaje) <= 0:
+                            dic_puntaje['puntaje'] = 0
+                            return 'guardar_puntaje',dic_puntaje
+                        else:
+                            return 'guardar_puntaje',dic_puntaje'''
