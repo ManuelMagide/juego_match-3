@@ -79,5 +79,4 @@ def mostrar_ajustes(ancho_alto_pantalla):
             pygame.draw.rect(pantalla, "darkorchid", res_900, 1, border_radius=15)
 
         pygame.display.update()
-
     pygame.quit()

@@ -25,9 +25,9 @@ def main():
                 estado = mostrar_menu(nueva_res)
         elif estado == "nivel":
             if bandera_ajustes == True:
-                estado, puntaje = nivel()
+                estado = nivel(PANTALLA)
             elif estado == 'nivel' and bandera_ajustes == False:
-                estado, puntaje = nivel()
+                estado = nivel(nueva_res)
         elif estado == 'guardar_puntaje':
             if bandera_ajustes == True:
                 estado = mostrar_puntajes(puntaje, PANTALLA)
