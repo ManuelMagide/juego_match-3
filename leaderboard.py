@@ -1,6 +1,7 @@
 import pygame
 from constantes import *
 from pygame.locals import *
+from funciones_utiles import *
 
 pygame.init()
 
@@ -15,10 +16,7 @@ def leaderboard(ancho_alto_pantalla):
     pantalla = pygame.display.set_mode(ancho_alto_pantalla)
     pygame.display.set_caption('MATCH-3')
 
-    boton_ancho = pantalla.get_width() * 0.1
-    boton_alto = pantalla.get_height() * 0.1
-    boton_x = (pantalla.get_width() - boton_ancho) / 150
-    boton_volver_y = pantalla.get_height() * 0.05
+    volver, volver_image, boton_x, boton_volver_y = generar_imagen(pantalla, 0.1, 0.1, 150, 0.05, 'imagenes\BOTONES_EXTRAS\VUELVE.png')
 
     fondo = pygame.image.load('imagenes\FONDOS\FONDO_MENU.png')
     fondo = pygame.transform.scale(fondo, ancho_alto_pantalla)
@@ -26,9 +24,8 @@ def leaderboard(ancho_alto_pantalla):
     '''puntajes = saber_top10()'''
 
     correr = True
-
     while correr:
-
+        
         pantalla.blit(fondo, (0,0))
         mouse_pos = pygame.mouse.get_pos()
 
@@ -40,17 +37,14 @@ def leaderboard(ancho_alto_pantalla):
                 if volver.collidepoint(mouse_pos):
                     return "menu_principal"
 
-        volver = pygame.Rect(boton_x, boton_volver_y, boton_ancho, boton_alto)
-        volver_image = pygame.image.load('imagenes\BOTONES_EXTRAS\VUELVE.png')
-        volver_image = pygame.transform.scale(volver_image, (boton_ancho, boton_alto))
         pantalla.blit(volver_image, (boton_x, boton_volver_y))
 
         texto = fuente.render('Top10', True, 'White')
-        pantalla.blit(texto, (boton_x * 65, boton_volver_y * 0.5))
+        boton_x_texto = (pantalla.get_width() - texto.get_width()) / 2
+        pantalla.blit(texto, (boton_x_texto, boton_volver_y * 0.5))
 
         if DEBUG == True:
             pygame.draw.rect(pantalla, "darkorchid", volver, 1, border_radius=15)
 
         pygame.display.update()
-
     pygame.quit()

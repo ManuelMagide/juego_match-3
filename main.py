@@ -15,9 +15,7 @@ def main():
     
     correr = True
     while correr:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                correr = False
+        
         if estado == "menu_principal":
             if bandera_ajustes == True:
                 estado = mostrar_menu(PANTALLA)

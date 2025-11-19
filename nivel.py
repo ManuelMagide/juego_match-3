@@ -3,6 +3,7 @@ import random
 from constantes import *
 from pygame.locals import *
 from puntajes import *
+from funciones_utiles import *
 
 def inicializar_matriz(cant_filas:int, cant_columnas:int, valor_inicial:any=None)->list[list]:
         matriz = []
@@ -17,7 +18,7 @@ def cargar_matriz_aleatoria(matriz:list[list], lista_valores:list)->None:
     for i in range(len(matriz)):
         for j in range(len(matriz[i])):
             indice_aleatorio = random.randint(0, len(lista_valores) - 1)
-            matriz[i][j] = {"objeto": lista_valores[indice_aleatorio]}
+            matriz[i][j] = {"imagen": lista_valores[indice_aleatorio]}
 
 def generar_rectangulos(matriz:list[list], rect_contenedor:pygame.Rect)->None:
     ancho_celda = int(rect_contenedor.width / len(matriz[0]) * 0.98)
@@ -29,49 +30,53 @@ def generar_rectangulos(matriz:list[list], rect_contenedor:pygame.Rect)->None:
             un_rect = pygame.Rect(un_rect_x, un_rect_y, ancho_celda, alto_celda)
             matriz[i][j].update({"rect": un_rect})
 
+def generar_estado(matriz:list[list])->None:
+    for i in range(len(matriz)):
+        for j in range(len(matriz[i])):
+            estado = False
+            matriz[i][j].update({"estado": estado})
+
 def dibujar_matriz(matriz:list[list], pantalla:pygame.Surface)->None:
     boton_ancho = pantalla.get_width() * 0.1
     boton_alto = pantalla.get_height() * 0.12
     for i in range(len(matriz)):
         for j in range(len(matriz[i])):
-            objeto_image = pygame.image.load(matriz[i][j]["objeto"])
-            objeto_image = pygame.transform.scale(objeto_image, (boton_ancho, boton_alto))
-            pantalla.blit(objeto_image, matriz[i][j]["rect"])
-
-            if DEBUG == True:
-                pygame.draw.rect(pantalla, "darkorchid", matriz[i][j]["rect"], 1, border_radius=15)
+            image = pygame.image.load(matriz[i][j]["imagen"])
+            image = pygame.transform.scale(image, (boton_ancho, boton_alto))
+            pantalla.blit(image, matriz[i][j]["rect"])
 
 def nivel(ancho_alto_pantalla):
 
-    lista_colores = ["imagenes\ICONS\DIENTE.png", 
+    lista_image = ["imagenes\ICONS\DIENTE.png", 
                     "imagenes\ICONS\FRUTA_V.png",
                     "imagenes\ICONS\HUEVO.png",
                     "imagenes\ICONS\OJO.png",
                     "imagenes\ICONS\ROSA.png",
                     "imagenes\ICONS\HOJA.png"]
     matriz = inicializar_matriz(8, 8)
-    cargar_matriz_aleatoria(matriz, lista_colores)
+    cargar_matriz_aleatoria(matriz, lista_image)
 
     pantalla = pygame.display.set_mode(ancho_alto_pantalla)
     pygame.display.set_caption('MATCH-3')
     size_fuente = int(ancho_alto_pantalla[1] * 0.1)
     fuente = pygame.font.SysFont('Impact', size_fuente)
 
-    boton_ancho = pantalla.get_width() * 0.1
-    boton_alto = pantalla.get_height() * 0.1
-    boton_x = (pantalla.get_width() - boton_ancho) / 150
-    boton_volver_y = pantalla.get_height() * 0.05
+    volver, volver_image, boton_x, boton_volver_y = generar_imagen(pantalla, 0.1, 0.1, 150, 0.05, 'imagenes\BOTONES_EXTRAS\VUELVE.png')
 
     margen_y = pantalla.get_height() * 0.001
     alto_rc = pantalla.get_height() - (margen_y * 2)
     margen_x = pantalla.get_width() - alto_rc - (pantalla.get_width() * 0.01)
     rectangulo_contenedor = pygame.Rect(margen_x, margen_y, alto_rc, alto_rc)
     generar_rectangulos(matriz, rectangulo_contenedor)
+    generar_estado(matriz)
 
     fondo = pygame.image.load('imagenes\FONDOS\FONDO_MENU.png')
     fondo = pygame.transform.scale(fondo, ancho_alto_pantalla)
 
     corriendo = True
+    aux_estado = False
+    primer_click = None  
+    segundo_click = None 
 
     while corriendo == True:
         
@@ -84,22 +89,57 @@ def nivel(ancho_alto_pantalla):
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 if volver.collidepoint(mouse_pos):
                     return "menu_principal"
+            
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 for i in range(len(matriz)):
                     for j in range(len(matriz[i])):
-                        if matriz[i][j]["rect"].collidepoint(evento.pos) == True:
-                            print(f"Apretaste sobre celda {i} - {j}")
-                            matriz[i][j]["objeto"] = "black"
 
-        volver = pygame.Rect(boton_x, boton_volver_y, boton_ancho, boton_alto)
-        volver_image = pygame.image.load('imagenes\BOTONES_EXTRAS\VUELVE.png')
-        volver_image = pygame.transform.scale(volver_image, (boton_ancho, boton_alto))
+                        if matriz[i][j]["rect"].collidepoint(evento.pos):
+
+                            if primer_click is None:
+                                primer_click = (i, j)
+                                matriz[i][j]["estado"] = True
+                                print("Primer clic:", primer_click)
+                                aux_rect = matriz[i][j]["rect"]
+                                aux_estado = matriz[i][j]["estado"]
+
+                            elif segundo_click is None:
+                                segundo_click = (i, j)
+                                matriz[i][j]["estado"] = True
+                                print("Segundo clic:", segundo_click) 
+
+                                i1, j1 = primer_click
+                                i2, j2 = segundo_click
+                                print(matriz[i1][j1])
+                                print(matriz[i2][j2])
+
+                                pos1 = matriz[i1][j1]["rect"].topleft
+                                pos2 = matriz[i2][j2]["rect"].topleft   
+
+                                matriz[i1][j1], matriz[i2][j2] = matriz[i2][j2], matriz[i1][j1]
+
+                                matriz[i1][j1]["rect"].topleft = pos1
+                                matriz[i2][j2]["rect"].topleft = pos2
+
+                                matriz[i1][j1]["estado"] = False
+                                matriz[i2][j2]["estado"] = False
+
+                                print(matriz[i1][j1])
+                                print(matriz[i2][j2])
+
+                                primer_click = None
+                                segundo_click = None
+                                aux_estado = False
+
         pantalla.blit(volver_image, (boton_x, boton_volver_y))
 
         pygame.draw.rect(pantalla, "black", rectangulo_contenedor)
         dibujar_matriz(matriz, pantalla)
+        if aux_estado == True:
+            pygame.draw.rect(pantalla, "green", aux_rect, 3, border_radius=15)
 
         if DEBUG == True:
             pygame.draw.rect(pantalla, "darkorchid", volver, 1, border_radius=15)
-
         pygame.display.flip()
+
+nivel(PANTALLA)
