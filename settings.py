@@ -6,6 +6,16 @@ from funciones_utiles import *
 pygame.init()
 
 def mostrar_ajustes(ancho_alto_pantalla):
+    """
+    Muestra los ajustes del juego, en este caso un cambio de resoluciones.
+    
+    Parametros:
+        ancho_alto_pantalla (tupla): Dimensiones de la pantalla (ancho, alto)
+    Return:
+        menu_principal (str): Cuando se presiona el boton de volver, nos lleva a la pantalla del menu principal
+        ajustes (str): Cuando se selecciona una resolucion, nos lleva a la misma pantalla de ajustes
+        nueva_res (tupla): Nueva resolucion seleccionada por el usuario
+    """
 
     pantalla = pygame.display.set_mode(ancho_alto_pantalla)
     pygame.display.set_caption('MATCH-3')

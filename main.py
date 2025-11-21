@@ -10,7 +10,6 @@ def main():
     pygame.init()
 
     estado = "menu_principal"
-    puntaje = {}
     bandera_ajustes = True
     
     correr = True
@@ -26,11 +25,6 @@ def main():
                 estado = nivel(PANTALLA)
             elif estado == 'nivel' and bandera_ajustes == False:
                 estado = nivel(nueva_res)
-        elif estado == 'guardar_puntaje':
-            if bandera_ajustes == True:
-                estado = mostrar_puntajes(puntaje, PANTALLA)
-            elif estado == 'guardar_puntaje' and bandera_ajustes == False:
-                estado = mostrar_puntajes(puntaje, nueva_res)
         elif estado == 'ajustes':
             if bandera_ajustes == True:
                 estado, nueva_res = mostrar_ajustes(PANTALLA)
@@ -39,9 +33,9 @@ def main():
                 estado, nueva_res = mostrar_ajustes(nueva_res)
         elif estado == "leaderboard":
             if bandera_ajustes == True:
-                estado = leaderboard(PANTALLA)
+                estado = mostrar_leaderboard(PANTALLA, 'puntajes.csv')
             elif estado == 'leaderboard' and bandera_ajustes == False:
-                estado = leaderboard(nueva_res)
+                estado = mostrar_leaderboard(nueva_res, 'puntajes.csv')
         elif estado == "exit":
             correr = False
             break

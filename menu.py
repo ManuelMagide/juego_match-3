@@ -7,6 +7,17 @@ from funciones_utiles import *
 pygame.init()
 
 def mostrar_menu(ancho_alto_pantalla):
+    """
+    Muestra el menu con las distintas opciones.
+    
+    parametros:
+        ancho_alto_pantalla(tupla): Dimensiones de la pantalla (ancho, alto)
+    return:
+        nivel(str): Si se selecciona jugar, te lleva a la pantalla del nivel
+        leaderboard(str): Si se selecciona leaderboard, te lleva a la pantalla de leaderboard
+        ajustes(str): Si se selecciona ajustes, te lleva a la pantalla de ajustes
+        exit(str): Si se selecciona exit, cierra el juego
+    """
 
     pantalla = pygame.display.set_mode(ancho_alto_pantalla)
     pygame.display.set_caption('MATCH-3')

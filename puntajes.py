@@ -1,101 +1,128 @@
 import pygame
 from pygame.locals import *
 from constantes import *
+import csv
+import os
 
 pygame.init()
 
-def mostrar_puntajes(puntaje_final, ancho_alto_pantalla):
 
-    fuente = pygame.font.SysFont('Impact', 30)
+def guardar_puntaje(nombre, puntaje, archivo_csv='puntajes.csv'):
+    """
+    Guarda el nombre y puntaje en un archivo CSV.
+    
+    parametros:
+        nombre (str): Nombre del jugador (3 letras)
+        puntaje (int): Puntaje obtenido en la partida
+        archivo_csv (str): Nombre del archivo CSV donde guardar los datos
+    """
+    archivo_existe = os.path.isfile(archivo_csv)
+    
+    try:
+        with open(archivo_csv, 'a', newline='') as archivo:
+            escritor = csv.writer(archivo)
+            
+            # Si el archivo no existe, escribir encabezados
+            if not archivo_existe:
+                escritor.writerow(['Nombre', 'Puntaje'])
+            
+            # Escribir los datos
+            escritor.writerow([nombre, puntaje])
+    except Exception as e:
+        print(f"Error al guardar el puntaje: {e}")
+
+
+def mostrar_leaderboard(ancho_alto_pantalla, archivo_csv='puntajes.csv'):
+    """
+    Muestra el leaderboard de puntajes en pantalla.
+    
+    Args:
+        ancho_alto_pantalla (tuple): Dimensiones de la pantalla (ancho, alto)
+        archivo_csv (str): Nombre del archivo CSV con los puntajes
+    
+    Returns:
+        str: 'menu_principal' cuando se cierra la pantalla
+    """
+    fuente_titulo = pygame.font.SysFont('Impact', 50)
+    fuente_normal = pygame.font.SysFont('Impact', 30)
+    
     pantalla = pygame.display.set_mode(ancho_alto_pantalla)
-    pygame.display.set_caption('MATCH-3')
-
-    fondo = pygame.image.load('imagenes\FONDOS\FONDO_MENU.png')
-    fondo = pygame.transform.scale(fondo, (ancho_alto_pantalla))
-
-    ancho_boton = 300
-    alto_boton = 30
-    separacion_botones = 50
-    posicion_x = (ancho_alto_pantalla[0] - ancho_boton) // 2
-    posicion = ((ancho_alto_pantalla[1] - (alto_boton + separacion_botones) * 3) // 2) + separacion_botones * 3
-    posicion_1 = posicion + alto_boton + separacion_botones
-
-    letra_1 = None
-    letra_2 = None
-    letra_3 = None
-
-    puede_guardar = False
-    boton_apretado = False
-    carga = False
-    volvio_a_cargar =False
-
+    pygame.display.set_caption('MATCH-3 - Leaderboard')
+    
+    fondo = pygame.image.load('imagenes\\FONDOS\\FONDO_MENU.png')
+    fondo = pygame.transform.scale(fondo, ancho_alto_pantalla)
+    
+    # Cargar puntajes del CSV
+    puntajes_data = []
+    if os.path.isfile(archivo_csv):
+        try:
+            with open(archivo_csv, 'r', newline='') as archivo:
+                lector = csv.DictReader(archivo)
+                for fila in lector:
+                    puntajes_data.append({
+                        'nombre': fila['Nombre'],
+                        'puntaje': int(fila['Puntaje'])
+                    })
+        except Exception as e:
+            print(f"Error al cargar puntajes: {e}")
+    
+    # Ordenar puntajes de mayor a menor
+    puntajes_data.sort(key=lambda x: x['puntaje'], reverse=True)
+    
+    # Mantener solo los top 10
+    puntajes_data = puntajes_data[:10]
+    
     correr = True
-
+    
     while correr:
-
-        pantalla.blit(fondo, (0,0))
-
-        if letra_1 != None and letra_2 != None and letra_3 != None:
-            puede_guardar = True
-
-        mouse_pos = pygame.mouse.get_pos()
-
+        pantalla.blit(fondo, (0, 0))
+        
+        # Título
+        titulo = fuente_titulo.render('LEADERBOARD', True, ('yellow'))
+        pantalla.blit(titulo, ((ancho_alto_pantalla[0] // 2) - 200, 50))
+        
+        # Encabezados
+        encabezado_pos = 150
+        encabezado_nombre = fuente_normal.render('Nombre', True, ('cyan'))
+        encabezado_puntaje = fuente_normal.render('Puntaje', True, ('cyan'))
+        pantalla.blit(encabezado_nombre, (300, encabezado_pos))
+        pantalla.blit(encabezado_puntaje, (700, encabezado_pos))
+        
+        # Mostrar puntajes
+        y_pos = encabezado_pos + 60
+        espaciado = 50
+        
+        if puntajes_data:
+            for idx, dato in enumerate(puntajes_data, 1):
+                # Posición del ranking
+                posicion = fuente_normal.render(f'{idx}.', True, ('white'))
+                pantalla.blit(posicion, (200, y_pos))
+                
+                # Nombre
+                nombre_texto = fuente_normal.render(dato['nombre'], True, ('lime'))
+                pantalla.blit(nombre_texto, (300, y_pos))
+                
+                # Puntaje
+                puntaje_texto = fuente_normal.render(str(dato['puntaje']), True, ('orange'))
+                pantalla.blit(puntaje_texto, (700, y_pos))
+                
+                y_pos += espaciado
+        else:
+            sin_puntajes = fuente_normal.render('No hay puntajes registrados', True, ('white'))
+            pantalla.blit(sin_puntajes, ((ancho_alto_pantalla[0] // 2) - 200, 300))
+        
+        # Instrucción para salir
+        instruccion = fuente_normal.render('Presiona ESC para volver al menú', True, ('white'))
+        pantalla.blit(instruccion, ((ancho_alto_pantalla[0] // 2) - 300, ancho_alto_pantalla[1] - 100))
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 correr = False
-            if event.type == MOUSEBUTTONDOWN and event.button == 1:
-                if boton.collidepoint(mouse_pos) and not volvio_a_cargar:
-                    boton_apretado = True
             elif event.type == pygame.KEYDOWN:
-                for tecla, letra in teclas_letras.items():
-                    if event.key == tecla:
-                        if letra_1 == None:
-                            letra_1 = letra
-                        elif letra_2 == None:
-                            letra_2 = letra
-                        elif letra_3 == None:
-                            letra_3 = letra
-                    elif event.key == pygame.K_BACKSPACE:
-                        if letra_3 is not None:
-                            letra_3 = None
-                            puede_guardar = False
-                        elif letra_2 is not None:
-                            letra_2 = None
-                        elif letra_1 is not None:
-                            letra_1 = None
+                if event.key == pygame.K_ESCAPE:
+                    correr = False
         
-        puntaje = puntaje_final['puntaje']
-        texto_puntaje = fuente.render(f'Puntaje del juego: {puntaje}', True, ('white'))
-        pantalla.blit(texto_puntaje, ((ancho_alto_pantalla[0] / 2) - 150, 100))
-        
-        texto_ingresar_nombre = fuente.render('Ingrese nombre:', True, ('white'))
-        pantalla.blit(texto_ingresar_nombre, ((ancho_alto_pantalla[0] // 2) - 100, 300))
-
-        texto_letras = fuente.render(f'{letra_1 or "_"} {letra_2 or "_"} {letra_3 or "_"}', True, ('red'))
-        pantalla.blit(texto_letras, ((ancho_alto_pantalla[0] // 2) - 30, 450))
-
-        boton = pygame.Rect(posicion_x, posicion_1, ancho_boton, alto_boton)
-        texto = fuente.render('Guardar puntaje', True, ('white'))
-        text_rect = texto.get_rect(center=(ancho_alto_pantalla[0] // 2, posicion_1 + alto_boton // 2))
-        pantalla.blit(texto, text_rect)
-
-        if boton_apretado:
-            if puede_guardar:
-                nombre = letra_1 + letra_2 + letra_3
-                carga = True
-                boton_apretado = False
-            else:
-                boton_apretado = False
-        
-        if carga:
-            texto = fuente.render('Se cargo correctamente', True, ('white'))
-            pantalla.blit(texto, ((ancho_alto_pantalla[0] // 2) - 160, 750))
-            volvio_a_cargar = True
-            return 'menu_principal'
-        else:
-            texto = fuente.render('Se deben ingresar las 3 letras para poder guardar.', True, ('white'))
-            pantalla.blit(texto, ((ancho_alto_pantalla[0] // 2) - 300, 750))
-
         pygame.display.update()
-
+    
     pygame.quit()
+    return 'menu_principal'
