@@ -9,11 +9,11 @@ def inicializar_matriz(cant_filas:int, cant_columnas:int, valor_inicial:any=None
     """
     Inicializa una matriz armada mediante listas y nosotros elegimos su formato.
     
-    Parametros:
+    parametros:
         cant_filas (int): Cantidad de filas que tendra la matriz
         cant_columnas (int): Cantidad de columnas que tendra la matriz
         valor_inicial (any): Valor con el que se inicializan las posiciones de la matriz
-    Return:
+    return:
         matriz (list[list]): Matriz inicializada con el valor inicial en todas sus posiciones
     """
     matriz = []
@@ -29,10 +29,10 @@ def cargar_matriz_aleatoria(matriz:list[list], lista_valores:list)->None:
     Carga la matriz que generamos y le da valores aleatorios a los distintos indices.
     Crea una matriz de diccionarios, agregandoles la clave "imagen" con el valor correspondiente.
     
-    Parametros:
+    parametros:
         matriz (list[list]): Matriz que vamos a cargar
         lista_valores (list): Lista con los valores que puede tomar cada posicion de la matriz
-    Return:
+    return:
         None
     """
     for i in range(len(matriz)):
@@ -44,10 +44,10 @@ def generar_rectangulos(matriz:list[list], rect_contenedor:pygame.Rect)->None:
     """
     Genera la hitbox, agregandole la clave "rect", con su respectivo valor, a cada posicion de la matriz.
     
-    Parametros:
+    parametros:
         matriz (list[list]): Matriz que vamos a cargar
         rect_contenedor (pygame.Rect): Rectangulo que contiene a toda la matriz
-    Return:
+    return:
         None
     """
     ancho_celda = int(rect_contenedor.width / len(matriz[0]) * 0.98)
@@ -63,9 +63,9 @@ def generar_estado(matriz:list[list])->None:
     """
     Genera el estado, agregandole la clave "estado", por defecto False, a cada posicion de la matriz.
     
-    Parametros:
+    parametros:
         matriz (list[list]): Matriz que vamos a cargar
-    Return:
+    return:
         None
     """
     for i in range(len(matriz)):
@@ -77,10 +77,10 @@ def dibujar_matriz(matriz:list[list], pantalla:pygame.Surface)->None:
     """
     Carga y dibuja la matriz en la pantalla.
     
-    Parametros:
+    parametros:
         matriz (list[list]): Matriz que vamos a cargar
         pantalla(surface): Superficie donnde se dibuja la imagen
-    Return:
+    return:
         None
     """
     boton_ancho = pantalla.get_width() * 0.1
@@ -95,9 +95,9 @@ def nivel(ancho_alto_pantalla):
     """
     Carga el nivel del juego y ejecuta el resto de funciones de matriz para generarla.
     
-    Parametros:
+    parametros:
         ancho_alto_pantalla (tupla): Dimensiones de la pantalla (ancho, alto)
-    Return:
+    return:
         menu_principal (str): Cuando se presiona el boton de volver, nos lleva a la pantalla del menu principal
     """
 

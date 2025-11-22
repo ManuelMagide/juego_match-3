@@ -29,9 +29,9 @@ def mostrar_menu(ancho_alto_pantalla):
     settings, settings_image, boton_x, boton_settings_y = generar_imagen(pantalla, 0.2, 0.1, 2, 0.6, 'imagenes\INTERFAZ\SETT.png')
     exit, exit_image, boton_x, boton_salir_y = generar_imagen(pantalla, 0.2, 0.1, 2, 0.7, 'imagenes\INTERFAZ\EXIT.png')
 
-    '''pygame.mixer.music.load("musica\Patricio_Rey_y_sus_Redonditos_de_Ricota_-_Musica_para_las_pastillas_(mp3.pm).mp3")
+    pygame.mixer.music.load("musica\Patricio_Rey_y_sus_Redonditos_de_Ricota_-_Musica_para_las_pastillas_(mp3.pm).mp3")
     pygame.mixer.music.play(1)
-    pygame.mixer.music.set_volume(0.05)'''
+    pygame.mixer.music.set_volume(0.05)
 
     fondo = pygame.image.load('imagenes\FONDOS\FONDO_MENU.png')
     fondo = pygame.transform.scale(fondo, ancho_alto_pantalla)

@@ -33,9 +33,9 @@ def main():
                 estado, nueva_res = mostrar_ajustes(nueva_res)
         elif estado == "leaderboard":
             if bandera_ajustes == True:
-                estado = mostrar_leaderboard(PANTALLA, 'puntajes.csv')
+                estado = leaderboard(PANTALLA)
             elif estado == 'leaderboard' and bandera_ajustes == False:
-                estado = mostrar_leaderboard(nueva_res, 'puntajes.csv')
+                estado = leaderboard(nueva_res)
         elif estado == "exit":
             correr = False
             break
