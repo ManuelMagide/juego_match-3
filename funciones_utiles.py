@@ -17,6 +17,7 @@ def generar_imagen(pantalla, porcentaje_ancho, porcentaje_alto, porcentaje_x, po
         x(float): Posicion x de la imagen
         y(float): Posicion y de la imagen
     """
+    
     ancho = pantalla.get_width() * porcentaje_ancho
     alto = pantalla.get_height() * porcentaje_alto
     x = (pantalla.get_width() - ancho) / porcentaje_x

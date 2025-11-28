@@ -1,8 +1,6 @@
 import pygame
 from pygame.locals import *
 from constantes import *
-import csv
-import os
 
 pygame.init()
 

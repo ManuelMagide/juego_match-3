@@ -153,37 +153,46 @@ def nivel(ancho_alto_pantalla):
                             if primer_click is None:
                                 primer_click = (i, j)
                                 matriz[i][j]["estado"] = True
-                                print("Primer clic:", primer_click)
                                 aux_rect = matriz[i][j]["rect"]
                                 aux_estado = matriz[i][j]["estado"]
 
                             elif segundo_click is None:
                                 segundo_click = (i, j)
                                 matriz[i][j]["estado"] = True
-                                print("Segundo clic:", segundo_click) 
 
-                                i1, j1 = primer_click
+                                i1, j1 = primer_click #i es fila(y), j es columna(x)
                                 i2, j2 = segundo_click
-                                print(matriz[i1][j1])
-                                print(matriz[i2][j2])
 
-                                pos1 = matriz[i1][j1]["rect"].topleft
-                                pos2 = matriz[i2][j2]["rect"].topleft   
+                                if (i1 - i2 == 0) or (j1 - j2 == 0):
+                                    if(i1 - i2 == 1 or i1 - i2 == -1) or (j1 - j2 == 1 or j1 - j2 == -1):
 
-                                matriz[i1][j1], matriz[i2][j2] = matriz[i2][j2], matriz[i1][j1]
+                                        pos1 = matriz[i1][j1]["rect"].topleft
+                                        pos2 = matriz[i2][j2]["rect"].topleft
 
-                                matriz[i1][j1]["rect"].topleft = pos1
-                                matriz[i2][j2]["rect"].topleft = pos2
+                                        matriz[i1][j1], matriz[i2][j2] = matriz[i2][j2], matriz[i1][j1]
 
-                                matriz[i1][j1]["estado"] = False
-                                matriz[i2][j2]["estado"] = False
+                                        matriz[i1][j1]["rect"].topleft = pos1
+                                        matriz[i2][j2]["rect"].topleft = pos2
 
-                                print(matriz[i1][j1])
-                                print(matriz[i2][j2])
+                                        if ((matriz[i1][j1]["imagen"] == matriz[i1+1][j1]["imagen"] and matriz[i1][j1]["imagen"] == matriz[i1+2][j1]["imagen"]) or
+                                        (matriz[i1][j1]["imagen"] == matriz[i1-1][j1]["imagen"] and matriz[i1][j1]["imagen"] == matriz[i1-2][j1]["imagen"]) or
+                                        (matriz[i1][j1]["imagen"] == matriz[i1][j1+1]["imagen"] and matriz[i1][j1]["imagen"] == matriz[i1][j1+2]["imagen"]) or
+                                        (matriz[i1][j1]["imagen"] == matriz[i1][j1-1]["imagen"] and matriz[i1][j1]["imagen"] == matriz[i1][j1-2]["imagen"])):
+                                            
+                                            print("Hay match")
 
-                                primer_click = None
-                                segundo_click = None
-                                aux_estado = False
+                                            matriz[i1][j1]["estado"] = False
+                                            matriz[i2][j2]["estado"] = False
+
+                                        primer_click = None
+                                        segundo_click = None
+                                        aux_estado = False
+                                    else:
+                                        matriz[i][j]["estado"] = False
+                                        segundo_click = None
+                                else:
+                                        matriz[i][j]["estado"] = False
+                                        segundo_click = None
 
         pantalla.blit(volver_image, (boton_x, boton_volver_y))
 
@@ -195,3 +204,5 @@ def nivel(ancho_alto_pantalla):
         if DEBUG == True:
             pygame.draw.rect(pantalla, "darkorchid", volver, 1, border_radius=15)
         pygame.display.flip()
+
+nivel(PANTALLA)
