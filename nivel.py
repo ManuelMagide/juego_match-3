@@ -87,9 +87,61 @@ def dibujar_matriz(matriz:list[list], pantalla:pygame.Surface)->None:
     boton_alto = pantalla.get_height() * 0.12
     for i in range(len(matriz)):
         for j in range(len(matriz[i])):
-            image = pygame.image.load(matriz[i][j]["imagen"])
-            image = pygame.transform.scale(image, (boton_ancho, boton_alto))
-            pantalla.blit(image, matriz[i][j]["rect"])
+            if matriz[i][j]["imagen"] is not None:
+                image = pygame.image.load(matriz[i][j]["imagen"])
+                image = pygame.transform.scale(image, (boton_ancho, boton_alto))
+                pantalla.blit(image, matriz[i][j]["rect"])
+
+def detectar_combinaciones(matriz, i, j):
+    """
+    Detecta combinaciones de 3 o mas figuras iguales en fila o columna.
+    
+    parametros:
+        matriz: Matriz del juego
+        i: Fila de la posicion a verificar
+        j: Columna de la posicion a verificar
+    return:
+        combinaciones (list): Lista de tuplas (i, j) con las posiciones de las figuras que forman combinacion
+    """
+    combinaciones = []
+    imagen = matriz[i][j]["imagen"]
+    
+
+    cont_horizontal = 1
+    izq = j - 1
+    while izq >= 0 and matriz[i][izq]["imagen"] == imagen:
+        cont_horizontal += 1
+        izq -= 1
+    
+    der = j + 1
+    while der < len(matriz[i]) and matriz[i][der]["imagen"] == imagen:
+        cont_horizontal += 1
+        der += 1
+    
+    if cont_horizontal >= 3:
+        for col in range(izq + 1, der):
+            combinaciones.append((i, col))
+    
+    
+    cont_vertical = 1
+    arriba = i - 1
+    while arriba >= 0 and matriz[arriba][j]["imagen"] == imagen:
+        cont_vertical += 1
+        arriba -= 1
+    
+    abajo = i + 1
+    while abajo < len(matriz) and matriz[abajo][j]["imagen"] == imagen:
+        cont_vertical += 1
+        abajo += 1
+    
+    if cont_vertical >= 3:
+        for fila in range(arriba + 1, abajo):
+            combinaciones.append((fila, j))
+    
+    return combinaciones
+
+def rellenar_vacios(matriz, lista_valores):
+    ''''''
 
 def nivel(ancho_alto_pantalla):
     """
@@ -112,7 +164,7 @@ def nivel(ancho_alto_pantalla):
 
     pantalla = pygame.display.set_mode(ancho_alto_pantalla)
     pygame.display.set_caption('MATCH-3')
-    size_fuente = int(ancho_alto_pantalla[1] * 0.1)
+    size_fuente = int(ancho_alto_pantalla[1] * 0.05)
     fuente = pygame.font.SysFont('Impact', size_fuente)
 
     volver, volver_image, boton_x, boton_volver_y = generar_imagen(pantalla, 0.1, 0.1, 150, 0.05, 'imagenes\BOTONES_EXTRAS\VUELVE.png')
@@ -128,9 +180,12 @@ def nivel(ancho_alto_pantalla):
     fondo = pygame.transform.scale(fondo, ancho_alto_pantalla)
 
     corriendo = True
+    puntaje = 0
     aux_estado = False
     primer_click = None  
     segundo_click = None 
+
+    texto = fuente.render(f'{puntaje}', True, 'White')
 
     while corriendo == True:
         
@@ -174,15 +229,28 @@ def nivel(ancho_alto_pantalla):
                                         matriz[i1][j1]["rect"].topleft = pos1
                                         matriz[i2][j2]["rect"].topleft = pos2
 
-                                        if ((matriz[i1][j1]["imagen"] == matriz[i1+1][j1]["imagen"] and matriz[i1][j1]["imagen"] == matriz[i1+2][j1]["imagen"]) or
-                                        (matriz[i1][j1]["imagen"] == matriz[i1-1][j1]["imagen"] and matriz[i1][j1]["imagen"] == matriz[i1-2][j1]["imagen"]) or
-                                        (matriz[i1][j1]["imagen"] == matriz[i1][j1+1]["imagen"] and matriz[i1][j1]["imagen"] == matriz[i1][j1+2]["imagen"]) or
-                                        (matriz[i1][j1]["imagen"] == matriz[i1][j1-1]["imagen"] and matriz[i1][j1]["imagen"] == matriz[i1][j1-2]["imagen"])):
+                                        combos = detectar_combinaciones(matriz, i, j)
+                                        if len(combos) > 0:
+                                            for fila, col in combos:
+                                                matriz[fila][col]['imagen'] = None
                                             
-                                            print("Hay match")
+                                            for col in range(len(matriz[0])):
+                                                for fila in range(len(matriz)-1, -1, -1):
 
-                                            matriz[i1][j1]["estado"] = False
-                                            matriz[i2][j2]["estado"] = False
+                                                    if matriz[fila][col]['imagen'] is None:
+                                                        for  arriba in  range(fila-1, -1, -1):
+
+                                                            if matriz[arriba][col]['imagen'] is not None:
+                                                                
+                                                                matriz[fila][col]['imagen'] = matriz[arriba][col]['imagen']
+                                                                matriz[arriba][col]['imagen'] = None
+                                                                break
+                                        
+                                        elif len(combos) == 0:
+                                            matriz[i1][j1], matriz[i2][j2] = matriz[i2][j2], matriz[i1][j1]
+
+                                            matriz[i1][j1]["rect"].topleft = pos1
+                                            matriz[i2][j2]["rect"].topleft = pos2
 
                                         primer_click = None
                                         segundo_click = None
@@ -195,6 +263,7 @@ def nivel(ancho_alto_pantalla):
                                         segundo_click = None
 
         pantalla.blit(volver_image, (boton_x, boton_volver_y))
+        pantalla.blit(texto, (boton_x, boton_volver_y * 8))
 
         pygame.draw.rect(pantalla, "black", rectangulo_contenedor)
         dibujar_matriz(matriz, pantalla)

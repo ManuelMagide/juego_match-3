@@ -29,6 +29,8 @@ def mostrar_ajustes(ancho_alto_pantalla):
 
     fondo = pygame.image.load('imagenes\FONDOS\FONDO_MENU.png')
     fondo = pygame.transform.scale(fondo, ancho_alto_pantalla)
+    texto = fuente.render('Ajustes', True, 'White')
+    boton_x_texto = (pantalla.get_width() - texto.get_width()) / 2
 
     correr = True
 
@@ -60,8 +62,6 @@ def mostrar_ajustes(ancho_alto_pantalla):
         pantalla.blit(res_900_image, (boton_res_900_x, boton_res_900_y))
         pantalla.blit(volver_image, (boton_x, boton_volver_y))
         
-        texto = fuente.render('Ajustes', True, 'White')
-        boton_x_texto = (pantalla.get_width() - texto.get_width()) / 2
         pantalla.blit(texto, (boton_x_texto, boton_volver_y * 0.5))
 
         if DEBUG == True:
